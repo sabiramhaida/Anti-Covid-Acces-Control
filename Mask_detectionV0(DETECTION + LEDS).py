@@ -4,6 +4,18 @@ import numpy as np
 import RPi.GPIO as GPIO
 import time
 
+#GREEN LED --------------------------------------------------
+pinGLed = 22  # utilisation de la pin 22
+GPIO.setmode(GPIO.BOARD)  # numérotation BOARD
+GPIO.setup(pinGLed, GPIO.OUT)  # activation de la pin 22 en sortie
+#GREEN LED --------------------------------------------------
+
+
+#RED LED --------------------------------------------------
+pinRLed = 16  # utilisation de la pin 16
+GPIO.setmode(GPIO.BOARD)  # numérotation BOARD
+GPIO.setup(pinRLed, GPIO.OUT)  # activation de la pin 16 en sortie
+#GREEN LED --------------------------------------------------
 
 
 np.set_printoptions(suppress=True)
@@ -109,12 +121,26 @@ while True:
                 print('{}: {}'.format(labels[i], prediction[0][i]))
             #dessiner le rectangle( pour voir le resultat clairement !)) 
             Draw_rectangle(detected_f, img, (0, 255, 0))
-           
+            
+            try:
+                GPIO.output(pinRLed, 0) 
+                GPIO.output(pinGLed, 1)  # allumer la led verte
+            except:
+                GPIO.cleanup()  # extinction de la led à l'arrêt du programme
+                
         elif(Avec_Mask < SANS_Mask and len(detected_f)>0):
             for i in range(0, len(prediction[0])):
                 print('{}: {}'.format(labels[i], prediction[0][i]))
             Draw_rectangle(detected_f, img, (0, 0, 255))
-           
+            try:
+                GPIO.output(pinGLed, 0) 
+                GPIO.output(pinRLed, 1)  # Allumer la led rouge
+            except:
+                GPIO.cleanup()  # extinction de la led à l'arrêt du programme
+        else:
+            
+                GPIO.output(pinGLed, 0) 
+                GPIO.output(pinRLed, 0)  # Allumer la led rouge
 
         cv2.imshow('webcam', img)
         if cv2.waitKey(1) == 27:
